@@ -3,30 +3,70 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="SafeSound is a school-safe music player template for legal, redistributable music on GitHub Pages.">
+  <meta name="description" content="SafeSound is a school-safe music player and music maker built for GitHub Pages.">
   <title>SafeSound</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="app-shell">
-    <header class="topbar">
+    <header class="topbar panel">
       <div class="brand">
-        <div class="brand-mark" aria-hidden="true">♪</div>
+        <div class="brand-mark" aria-hidden="true">SS</div>
         <div>
-          <p class="eyebrow">Legal school-safe listening</p>
+          <p class="eyebrow">Legal school-safe music</p>
           <h1>SafeSound</h1>
         </div>
       </div>
 
+      <nav class="quick-nav" aria-label="Primary">
+        <a href="#libraryPanel">Library</a>
+        <a href="#studioPanel">Studio</a>
+        <a href="#aboutPanel">Licenses</a>
+      </nav>
+
       <div class="topbar-actions">
+        <button id="themeToggle" class="ghost-button" type="button" aria-pressed="false">Dark Mode</button>
         <button id="focusToggle" class="ghost-button" type="button" aria-pressed="false">Focus Mode</button>
-        <button id="aboutToggle" class="ghost-button" type="button" aria-expanded="false" aria-controls="aboutPanel">About &amp; Licenses</button>
+        <button id="aboutToggle" class="ghost-button" type="button" aria-expanded="false" aria-controls="aboutPanel">About</button>
       </div>
     </header>
 
     <main class="layout">
       <aside class="sidebar">
-        <section class="panel playlist-panel">
+        <section class="panel sidebar-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="panel-kicker">Quick view</p>
+              <h2>Now Playing</h2>
+            </div>
+          </div>
+
+          <div class="showcase-card">
+            <img id="trackCover" class="showcase-cover" alt="" src="">
+            <div class="showcase-copy">
+              <p id="trackTitle" class="showcase-title">No track selected</p>
+              <p id="trackMeta" class="showcase-meta">Pick something from the safe library.</p>
+            </div>
+            <div class="showcase-glow" aria-hidden="true"></div>
+          </div>
+
+          <div class="mini-stats">
+            <article class="mini-stat">
+              <span class="panel-kicker">Tracks</span>
+              <strong id="trackCount">0</strong>
+            </article>
+            <article class="mini-stat">
+              <span class="panel-kicker">Favorites</span>
+              <strong id="favoriteCount">0</strong>
+            </article>
+            <article class="mini-stat">
+              <span class="panel-kicker">Playlists</span>
+              <strong id="playlistCount">0</strong>
+            </article>
+          </div>
+        </section>
+
+        <section class="panel sidebar-panel">
           <div class="panel-heading">
             <div>
               <p class="panel-kicker">Saved locally</p>
@@ -37,17 +77,17 @@
 
           <form id="playlistForm" class="playlist-form" autocomplete="off">
             <label class="sr-only" for="playlistName">Playlist name</label>
-            <input id="playlistName" name="playlistName" maxlength="40" placeholder="Type a playlist name" required>
+            <input id="playlistName" name="playlistName" maxlength="40" placeholder="Create a playlist" required>
             <button type="submit" class="primary-button">Create Playlist</button>
           </form>
 
           <div id="playlistList" class="playlist-list" aria-live="polite"></div>
         </section>
 
-        <section class="panel active-playlist-panel">
+        <section class="panel sidebar-panel">
           <div class="panel-heading">
             <div>
-              <p class="panel-kicker">Editing area</p>
+              <p class="panel-kicker">Editor</p>
               <h2 id="activePlaylistTitle">Library View</h2>
             </div>
             <div class="playlist-tools">
@@ -55,6 +95,7 @@
               <button id="deletePlaylistButton" class="ghost-button small danger" type="button">Delete</button>
             </div>
           </div>
+
           <div id="playlistDetail" class="playlist-detail empty-state">
             Select a playlist to add tracks, remove tracks, and reorder them.
           </div>
@@ -64,74 +105,178 @@
       <section class="content">
         <section class="hero panel">
           <div class="hero-copy">
-            <p class="panel-kicker">Designed for schools</p>
-            <h2>Safe music, friendly design, no risky features.</h2>
+            <p class="panel-kicker">Built for students</p>
+            <h2>Play safe tracks, build your own songs, and stay fully school-friendly.</h2>
             <p>
-              SafeSound only uses music that is legal to redistribute with the project. The starter library in this template uses original demo tracks generated by the app so you can test everything safely on GitHub Pages.
+              SafeSound stays legal by using original generated demo tracks and locally created songs. No commercial streaming, no uploads, no risky social features.
             </p>
             <div class="hero-tags">
               <span>Static site</span>
-              <span>No backend</span>
               <span>No ads</span>
-              <span>No uploads</span>
+              <span>No backend</span>
+              <span>Original demo songs</span>
             </div>
           </div>
 
           <div class="hero-card">
             <p class="mini-label">Current track</p>
             <div id="heroNowPlaying" class="hero-now-playing">Choose a track to begin.</div>
+            <p id="heroTrackDescription" class="hero-track-description">
+              SafeSound includes chill instrumentals, gentle focus tracks, and original lyric experiments.
+            </p>
             <div class="hero-meter" aria-hidden="true">
               <span></span><span></span><span></span><span></span><span></span>
             </div>
           </div>
         </section>
 
-        <section class="toolbar panel">
-          <div class="search-wrap">
-            <label class="sr-only" for="searchInput">Search tracks</label>
-            <input id="searchInput" type="search" placeholder="Search by title, artist, or category">
-          </div>
+        <section class="dashboard-grid">
+          <section id="libraryPanel" class="panel content-panel">
+            <div class="section-heading">
+              <div>
+                <p class="panel-kicker">Safe library</p>
+                <h2>Tracks</h2>
+              </div>
+              <p id="resultsSummary" class="results-summary">Loading tracks...</p>
+            </div>
 
-          <div class="filter-wrap">
-            <label class="sr-only" for="categoryFilter">Filter category</label>
-            <select id="categoryFilter">
-              <option value="all">All categories</option>
-            </select>
-          </div>
+            <div class="toolbar">
+              <div class="search-wrap">
+                <label class="sr-only" for="searchInput">Search tracks</label>
+                <input id="searchInput" type="search" placeholder="Search title, artist, category, or mood">
+              </div>
 
-          <button id="favoritesFilter" class="ghost-button" type="button" aria-pressed="false">Favorites Only</button>
+              <div class="filter-wrap">
+                <label class="sr-only" for="categoryFilter">Filter category</label>
+                <select id="categoryFilter">
+                  <option value="all">All categories</option>
+                </select>
+              </div>
+
+              <button id="favoritesFilter" class="ghost-button" type="button" aria-pressed="false">Favorites Only</button>
+              <button id="lyricFilter" class="ghost-button" type="button" aria-pressed="false">Lyrics</button>
+            </div>
+
+            <div id="categoryChips" class="category-chips" aria-label="Quick category filters"></div>
+            <div id="trackGrid" class="track-grid" aria-live="polite"></div>
+          </section>
+
+          <section class="panel content-panel lyrics-panel">
+            <div class="section-heading">
+              <div>
+                <p class="panel-kicker">Sing-along safe</p>
+                <h2>Lyrics & Notes</h2>
+              </div>
+            </div>
+
+            <div id="lyricsPanelBody" class="lyrics-body empty-state">
+              Play a lyric track to see original school-safe lyrics here.
+            </div>
+          </section>
         </section>
 
-        <section class="stats-grid">
-          <article class="stat-card panel">
-            <p class="panel-kicker">Library</p>
-            <strong id="trackCount">0</strong>
-            <span>safe bundled tracks</span>
-          </article>
-          <article class="stat-card panel">
-            <p class="panel-kicker">Favorites</p>
-            <strong id="favoriteCount">0</strong>
-            <span>saved on this device</span>
-          </article>
-          <article class="stat-card panel">
-            <p class="panel-kicker">Playlists</p>
-            <strong id="playlistCount">0</strong>
-            <span>stored in browser only</span>
-          </article>
-        </section>
-
-        <section class="library-section">
+        <section id="studioPanel" class="panel content-panel studio-panel">
           <div class="section-heading">
             <div>
-              <p class="panel-kicker">Starter catalog</p>
-              <h2>Safe Library</h2>
+              <p class="panel-kicker">Create your own music</p>
+              <h2>SafeSound Studio</h2>
             </div>
-            <p id="resultsSummary" class="results-summary">Loading tracks...</p>
+            <button id="randomizeComposerButton" class="pill-button" type="button">Randomize Idea</button>
           </div>
-          <div id="trackGrid" class="track-grid" aria-live="polite"></div>
+
+          <div class="studio-grid">
+            <form id="composerForm" class="composer-form" autocomplete="off">
+              <div class="form-grid">
+                <label>
+                  <span>Track title</span>
+                  <input id="composerTitle" maxlength="48" placeholder="My Study Beat" required>
+                </label>
+
+                <label>
+                  <span>Artist name</span>
+                  <input id="composerArtist" maxlength="36" placeholder="Student Creator" required>
+                </label>
+
+                <label>
+                  <span>Category</span>
+                  <select id="composerCategory"></select>
+                </label>
+
+                <label>
+                  <span>Tempo</span>
+                  <input id="composerTempo" type="range" min="60" max="130" value="88">
+                  <strong id="tempoReadout">88 BPM</strong>
+                </label>
+
+                <label>
+                  <span>Instrument style</span>
+                  <select id="composerWaveform">
+                    <option value="sine">Soft sine</option>
+                    <option value="triangle">Warm triangle</option>
+                    <option value="square">Retro square</option>
+                    <option value="sawtooth">Bright saw</option>
+                  </select>
+                </label>
+
+                <label>
+                  <span>Root note</span>
+                  <select id="composerRoot">
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+                    <option value="E">E</option>
+                    <option value="F">F</option>
+                    <option value="G">G</option>
+                    <option value="A">A</option>
+                  </select>
+                </label>
+
+                <label class="full-width">
+                  <span>Pattern</span>
+                  <select id="composerPattern">
+                    <option value="drift">Drift</option>
+                    <option value="bounce">Bounce</option>
+                    <option value="night">Night Lo-fi</option>
+                    <option value="spark">Spark</option>
+                    <option value="piano">Piano Steps</option>
+                  </select>
+                </label>
+
+                <label class="full-width">
+                  <span>Optional lyrics or notes</span>
+                  <textarea id="composerLyrics" rows="5" placeholder="Write your own safe lyrics or study notes. One line per lyric line."></textarea>
+                </label>
+              </div>
+
+              <div class="composer-actions">
+                <button type="submit" class="primary-button">Save Custom Track</button>
+                <button id="previewComposerButton" type="button" class="ghost-button">Preview</button>
+              </div>
+            </form>
+
+            <div class="studio-side">
+              <div class="studio-preview">
+                <p class="mini-label">Studio preview</p>
+                <h3 id="composerPreviewTitle">My Study Beat</h3>
+                <p id="composerPreviewMeta">Focus | 88 BPM | Warm triangle</p>
+                <div class="preview-bars" aria-hidden="true">
+                  <span></span><span></span><span></span><span></span><span></span><span></span>
+                </div>
+              </div>
+
+              <div class="studio-help">
+                <h3>How this stays legal</h3>
+                <p>
+                  Custom tracks are generated in your browser from note patterns you choose. That means you are not copying music from outside services, and your created tracks stay local to this browser.
+                </p>
+                <p>
+                  If you write lyrics, keep them original and school-safe. SafeSound will only display the lyrics you type yourself.
+                </p>
+              </div>
+            </div>
+          </div>
         </section>
 
-        <section id="aboutPanel" class="about-panel panel" hidden>
+        <section id="aboutPanel" class="panel content-panel about-panel" hidden>
           <div class="section-heading">
             <div>
               <p class="panel-kicker">Legal transparency</p>
@@ -141,10 +286,10 @@
 
           <div class="about-copy">
             <p>
-              SafeSound is built for school-safe listening. It does not connect to Spotify, YouTube, Apple Music, or any commercial streaming service. It does not support uploads, chat, comments, downloads from third-party services, or user-generated audio sharing.
+              SafeSound does not connect to Spotify, YouTube, Apple Music, or any commercial streaming service. It does not support uploads, comments, chat, or third-party downloading.
             </p>
             <p>
-              This starter template includes original demo tracks generated by the app for safe testing. Replace them only with tracks that are clearly public-domain, CC0, or otherwise licensed for redistribution in your project.
+              The starter library contains original demo music bundled for safe testing and locally created custom songs stored only in this browser. Replace demo entries only with music that is clearly public-domain, CC0, or otherwise redistributable.
             </p>
           </div>
 
@@ -168,15 +313,7 @@
 
     <footer class="player-shell panel">
       <div class="player-main">
-        <div class="now-playing">
-          <img id="trackCover" class="track-cover" alt="" src="">
-          <div>
-            <p id="trackTitle" class="track-title">No track selected</p>
-            <p id="trackMeta" class="track-meta">Pick a song from the safe library.</p>
-          </div>
-        </div>
-
-        <div class="player-controls">
+        <div class="transport-cluster">
           <div class="transport">
             <button id="shuffleButton" class="icon-button" type="button" aria-pressed="false" title="Shuffle">Shuffle</button>
             <button id="prevButton" class="icon-button" type="button" title="Previous track">Prev</button>
